@@ -26,6 +26,17 @@ class UserTest extends TestCase
             ->assertJson($data, false);
     }
 
+    public function test_can_create_user_validate() {
+
+        $data = [
+            'name' => $this->faker->name,
+            'position' => $this->faker->randomElement(['Developer', 'FullStack', 'Manager']),
+        ];
+
+        $this->post(route('user.store'), $data)
+            ->assertStatus(422);
+    }
+
     public function test_can_update_user() {
 
         $user = factory(User::class)->create();
@@ -65,12 +76,11 @@ class UserTest extends TestCase
 
         $this->json('GET','/api/user')
             ->assertStatus(200)
-            ->assertJson($users->toArray())
             ->assertJsonStructure([
                 'success',
                 'users' => [
-                '*' => ['id', 'name', 'position', 'department', 'active', 'status', 'created_at', 'updated_at']
-                    ]
+                    '*' => ['id', 'name', 'position', 'department', 'active', 'status', 'created_at', 'updated_at']
+                ]
             ]);
     }
 }
